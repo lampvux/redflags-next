@@ -6,7 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "0.2.32",
+    "firebase": "^9.22.2",
     "negotiator": "0.6.3",
     "next": "latest",
     "react": "^18.2.0",
@@ -18,6 +18,9 @@
     "@types/node": "^18.11.5",
     "@types/react": "^18.0.23",
     "@types/react-dom": "^18.0.7",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2",
     "typescript": "^4.8.4"
   }
 }
