@@ -6,31 +6,46 @@ import Addcard from "./components/Addcard";
 import Flags from "./components/Flags";
 import { flagType } from "../types";
 import { useAuthContext } from "../context/AuthContext";
+import { Flex } from "@chakra-ui/react";
+import Sidebar from "./components/Sidebar";
 
 async function Page() {
-  const { user } = useAuthContext();
+  const { user, loading } = useAuthContext();
   const router = useRouter();
   const [reds, setReds] = useState<any[]>([]);
   const [whites, setWhites] = useState<any[]>([]);
 
   useEffect(() => {
-    const red = getDocuments(flagType.redFlags).then((res) => {
+    console.log("loading, user", [loading, user]);
+    if (loading && !user) {
+      router.push("/login");
+    } else {
+      console.log("user", user);
+    }
+    getDocuments(flagType.redFlags).then((res) => {
       setReds(res);
     });
 
-    const white = getDocuments(flagType.whiteFlags).then((res) => {
+    getDocuments(flagType.whiteFlags).then((res) => {
       setWhites(res);
     });
   }, [reds, whites]);
 
   return (
-    <main className="container flex flex-col p-4">
-      <Addcard />
-      <br />
-      <Flags flags={reds} />
-      <br />
-      <Flags flags={whites} />
-    </main>
+    <>
+      {
+        <Flex w={"100%"} mt={"64"}>
+          <Sidebar />
+          <Flex direction="column" w="100%">
+            <Addcard />
+            <br />
+            <Flags flags={reds} />
+            <br />
+            <Flags flags={whites} />
+          </Flex>
+        </Flex>
+      }
+    </>
   );
 }
 
