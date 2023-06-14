@@ -6,6 +6,8 @@ import {
   getDoc,
   getDocs,
   collection,
+  onSnapshot
+  
 } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
@@ -45,6 +47,14 @@ export async function getDoument(collection: string, id: string) {
   }
 
   return { result, error };
+}
+
+export async function watchDocument(collectionName: string, id: string, callback: (data: any) => void) {
+  const unsub = onSnapshot(doc(db, collectionName, id), (doc) => {
+    console.log("Current data: ", doc.data());
+    callback(doc.data());
+  });
+  return unsub();  
 }
 
 export async function getDocuments(collectionName: string): Promise<any[]> {
