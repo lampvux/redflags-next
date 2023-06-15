@@ -7,7 +7,7 @@ import Flags from "./components/Flags";
 import { flagType } from "../types";
 import { useAuthContext } from "../context/AuthContext";
 import { Flex } from "@chakra-ui/react";
-import Sidebar from "./components/Sidebar";
+import Nav from "./components/Nav";
 
 async function Page() {
   const { user, loading } = useAuthContext();
@@ -17,7 +17,7 @@ async function Page() {
 
   useEffect(() => {
     console.log("loading, user", [loading, user]);
-    if (loading && !user) {
+    if (!loading && !user) {
       router.push("/login");
     } else {
       console.log("user", user);
@@ -29,14 +29,14 @@ async function Page() {
     getDocuments(flagType.whiteFlags).then((res) => {
       setWhites(res);
     });
-  }, [reds, whites]);
+  }, [reds, whites, user, router]);
 
   return (
     <>
       {
-        <Flex w={"100%"} mt={"64"}>
-          <Sidebar />
-          <Flex direction="column" w="100%">
+        <Flex w={"100%"}>
+          <Nav />
+          <Flex direction="column">
             <Addcard />
             <br />
             <Flags flags={reds} />

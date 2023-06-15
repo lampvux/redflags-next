@@ -31,6 +31,7 @@ export default function Nav() {
         position="fixed"
         right={0}
         w={"100%"}
+        maxH={"60px"}
       >
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <Box>Logo</Box>

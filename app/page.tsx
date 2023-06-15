@@ -15,7 +15,7 @@ import {
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 
-export default function CallToActionWithAnnotation() {
+export default function Index() {
   return (
     <>
       <Head>
@@ -25,7 +25,7 @@ export default function CallToActionWithAnnotation() {
         />
       </Head>
       <Navigation />
-      <Container maxW={"3xl"}>
+      <Container maxW={"3xl"} minH={"calc(100vh - 415px)"}>
         <Stack
           as={Box}
           textAlign={"center"}

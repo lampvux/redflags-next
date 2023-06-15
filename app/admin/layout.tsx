@@ -1,5 +1,7 @@
+"use client";
+import { Flex } from "@chakra-ui/react";
 import React from "react";
-import Nav from "./components/Nav";
+import Sidebar from "./components/Sidebar";
 
 export default function DashboardLayout({
   children,
@@ -7,9 +9,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main>
-      <Nav />
-      {children}
-    </main>
+    <>
+      <Flex direction={"column"}>
+        <Sidebar />
+        <Flex direction={"row"}>{children}</Flex>
+      </Flex>
+    </>
   );
 }

@@ -3,6 +3,8 @@ import {
   signInWithPopup,
   getAuth,
   signOut,
+  setPersistence,
+  browserSessionPersistence,
 } from "firebase/auth";
 
 import firebase_app from "./config";
@@ -11,6 +13,20 @@ const provider = new GoogleAuthProvider();
 provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
 
 export const auth = getAuth(firebase_app);
+setPersistence(auth, browserSessionPersistence)
+  .then(() => {
+    // Existing and future Auth states are now persisted in the current
+    // session only. Closing the window would clear any existing state even
+    // if a user forgets to sign out.
+    // ...
+    // New sign-in will be persisted with session persistence.
+    return;
+  })
+  .catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
 
 /**
  * We only allow sign through google account
