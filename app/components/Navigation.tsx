@@ -26,13 +26,21 @@ import {
   MoonIcon,
   SunIcon,
 } from "@chakra-ui/icons";
-import { useAuthContext } from "../context/AuthContext";
+import { useEffect, useState } from "react";
+import { User } from "firebase/auth";
+import { getCurrentUser } from "../firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function Navigation() {
   const { isOpen, onToggle } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { user, loading } = useAuthContext();
-
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      setUser(user);
+    });
+  }, [user, router]);
   return (
     <Flex
       bg={useColorModeValue("white", "gray.800")}
@@ -83,7 +91,7 @@ export default function Navigation() {
             <Button onClick={toggleColorMode}>
               {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             </Button>
-            {loading && !user ? (
+            {!user ? (
               <Flex>
                 <Button
                   as={"a"}
@@ -91,6 +99,7 @@ export default function Navigation() {
                   fontWeight={400}
                   variant={"link"}
                   href={"/login"}
+                  marginRight={4}
                 >
                   Sign In
                 </Button>

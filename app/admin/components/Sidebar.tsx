@@ -14,6 +14,8 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  Button,
+  useColorMode,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -24,6 +26,7 @@ import {
   FiMenu,
 } from "react-icons/fi";
 import { IconType } from "react-icons";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 interface LinkItemProps {
   name: string;
@@ -40,7 +43,12 @@ const LinkItems: Array<LinkItemProps> = [
 export default function Sidebar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
+    <Box
+      minH={{ base: "auto", md: "100vh" }}
+      bg={useColorModeValue("gray.100", "gray.900")}
+      maxW={{ base: "100%", md: "240px" }}
+      position={{ base: "relative", md: "fixed" }}
+    >
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
@@ -138,6 +146,8 @@ interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -156,10 +166,14 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         aria-label="open menu"
         icon={<FiMenu />}
       />
-
-      <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
-        Logo
-      </Text>
+      <Flex justifyContent={"space-between"} w={"100%"}>
+        <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
+          Logo
+        </Text>
+        <Button onClick={toggleColorMode}>
+          {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+        </Button>
+      </Flex>
     </Flex>
   );
 };

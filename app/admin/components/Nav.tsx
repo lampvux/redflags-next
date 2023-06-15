@@ -28,10 +28,11 @@ export default function Nav() {
         bg={useColorModeValue("gray.100", "gray.900")}
         px={4}
         top={0}
-        position="fixed"
+        position="sticky"
         right={0}
         w={"100%"}
         maxH={"60px"}
+        display={{ base: "none", md: "block" }}
       >
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <Box>Logo</Box>

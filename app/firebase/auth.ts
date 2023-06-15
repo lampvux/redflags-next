@@ -5,6 +5,8 @@ import {
   signOut,
   setPersistence,
   browserSessionPersistence,
+  User,
+  Auth,
 } from "firebase/auth";
 
 import firebase_app from "./config";
@@ -28,6 +30,25 @@ setPersistence(auth, browserSessionPersistence)
     const errorMessage = error.message;
   });
 
+export const getCurrentUser = async () => {
+  const promisifiedOnAuthStateChanged = (
+    authData: Auth
+  ): Promise<User | null> => {
+    return new Promise((resolve, reject) => {
+      authData.onAuthStateChanged((user) => {
+        if (user) {
+          resolve(user);
+        } else {
+          resolve(null);
+        }
+      });
+    });
+  };
+
+  const user = await promisifiedOnAuthStateChanged(auth);
+  return user;
+};
+
 /**
  * We only allow sign through google account
  */
@@ -44,7 +65,7 @@ export function signIn() {
       // The signed-in user info.
       const user = result.user;
       console.log("user", user);
-      return result;
+      return user;
       // IdP data available using getAdditionalUserInfo(result)
       // ...
     })
