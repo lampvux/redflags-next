@@ -13,10 +13,12 @@ async function Page() {
 
   useEffect(() => {
     getDocuments(flagType.redFlags).then((res) => {
+      console.log("res", res);
       setReds(res);
     });
 
     getDocuments(flagType.whiteFlags).then((res) => {
+      console.log("res", res);
       setWhites(res);
     });
   }, [reds, whites]);
@@ -24,11 +26,11 @@ async function Page() {
   return (
     <Flex position={"relative"} width={"100%"} direction="column">
       <Nav />
-      <Flex p={4}>
+      <Flex p={"20px"} direction="column">
         <Addcard />
-        <br />
+
         <Flags flags={reds} />
-        <br />
+
         <Flags flags={whites} />
       </Flex>
     </Flex>
