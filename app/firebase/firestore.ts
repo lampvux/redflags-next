@@ -8,6 +8,7 @@ import {
   collection,
   onSnapshot,
   addDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
@@ -48,7 +49,7 @@ export async function addData(colllection: string, data: any) {
 }
 
 export async function getDoument(collection: string, id: string) {
-  let docRef = doc(db, collection, id);
+  const docRef = doc(db, collection, id);
 
   let result = null;
   let error = null;
@@ -72,24 +73,27 @@ export async function watchDocument(
   });
   return unsub();
 }
-
 export async function getDocuments(collectionName: string): Promise<any[]> {
-  const listDocs: any[] = [];
-  return new Promise(async (resolve, reject) => {
-    try {
-      const querySnapshot = await getDocs(collection(db, collectionName));
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        listDocs.push({
-          id: doc.id,
-          data: doc.data(),
-        });
-      });
-    } catch (error) {
-      console.log("error", error);
-    }
-    Promise.all(listDocs).then((documents) => {
-      resolve(documents);
-    });
-  });
+  try {
+    const querySnapshot = await getDocs(collection(db, collectionName));
+    const listDocs: any[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      data: doc.data(),
+    }));
+    return listDocs;
+  } catch (error) {
+    console.log("error", error);
+    return [];
+  }
+}
+
+export async function deleteDocument(
+  id: string,
+  collectionName: string
+): Promise<void> {
+  try {
+    return await deleteDoc(doc(db, collectionName, id));
+  } catch (error) {
+    console.log("error", error);
+  }
 }

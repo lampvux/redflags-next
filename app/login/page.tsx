@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getCurrentUser, signIn } from "../firebase/auth";
 
-export default function SimpleCard() {
+export default function Login() {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   useEffect(() => {
@@ -60,14 +60,6 @@ export default function SimpleCard() {
               p={8}
             >
               <Stack spacing={4}>
-                <FormControl id="email">
-                  <FormLabel>Email address</FormLabel>
-                  <Input type="email" />
-                </FormControl>
-                <FormControl id="password">
-                  <FormLabel>Password</FormLabel>
-                  <Input type="password" />
-                </FormControl>
                 <Stack spacing={10}>
                   <Stack
                     direction={{ base: "column", sm: "row" }}

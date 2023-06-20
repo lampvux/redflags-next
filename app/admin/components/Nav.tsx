@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 import { ReactNode } from "react";
 import {
@@ -33,6 +34,7 @@ export default function Nav() {
         w={"100%"}
         maxH={"60px"}
         display={{ base: "none", md: "block" }}
+        zIndex={9999}
       >
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <Box>Logo</Box>

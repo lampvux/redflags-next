@@ -1,10 +1,12 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "./DataTable";
-import { Flex } from "@chakra-ui/react";
+import { Badge, Button, Flex, Spacer } from "@chakra-ui/react";
+import { flagType } from "../../types";
+import { deleteDocument } from "../../firebase/firestore";
 
-type Flag = {
+export type Flag = {
   id: number;
   description: string;
   type: string;
@@ -16,15 +18,26 @@ type FlagProps = {
 };
 
 const columnHelper = createColumnHelper<any>();
-const handleEditRow = () => {};
-const handleDeleteRow = () => {};
+const handleEditRow = (id: string, type: string) => {};
+const handleDeleteRow = (id: string, type: string) => {
+  try {
+    deleteDocument(id, type);
+  } catch (error) {
+    console.log("error when deleting document", error);
+  }
+};
 const columns = [
   columnHelper.accessor("description", {
     cell: (info) => info.getValue(),
     header: "Description",
   }),
   columnHelper.accessor("type", {
-    cell: (info) => info.getValue(),
+    cell: (info) =>
+      info.getValue() == flagType.redFlags ? (
+        <Badge colorScheme="red">Red</Badge>
+      ) : (
+        <Badge>White</Badge>
+      ),
     header: "Type",
   }),
   columnHelper.accessor("hint", {
@@ -33,12 +46,28 @@ const columns = [
   }),
   columnHelper.display({
     id: "actions",
-    cell: (props) => (
-      <Flex>
-        <button onClick={handleEditRow}>Edit</button>
-        <button onClick={handleDeleteRow}>Delete</button>
-      </Flex>
-    ),
+    cell: (props) => {
+      console.log("props", props);
+      return (
+        <Flex>
+          <Button
+            onClick={() =>
+              handleEditRow(props.row.original.id, props.row.original.type)
+            }
+          >
+            Edit
+          </Button>
+          <Spacer />
+          <Button
+            onClick={() =>
+              handleDeleteRow(props.row.original.id, props.row.original.type)
+            }
+          >
+            Delete
+          </Button>
+        </Flex>
+      );
+    },
   }),
 ];
 export default function Flags({ flags }: FlagProps) {

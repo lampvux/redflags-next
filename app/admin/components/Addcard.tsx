@@ -8,7 +8,7 @@ import {
   FormErrorMessage,
   Stack,
   Button,
-  Spacer,
+  Box,
 } from "@chakra-ui/react";
 import { addData } from "../../firebase/firestore";
 import { flagType } from "../../types";
@@ -29,12 +29,23 @@ export default function Addcard() {
     setCardHint(e.target.value);
   }
 
+  function updateStatusEnabled() {
+    setButtonDisabled(false);
+    setCardType("");
+    setCardDescription("");
+    setCardHint("");
+  }
+
   async function handleAddCard(e: React.MouseEvent) {
     e.preventDefault();
     setButtonDisabled(true);
     console.log("cardType", cardType);
     console.log("cardDescription", cardDescription);
     console.log("cardHint", cardHint);
+    if (!cardType || !cardDescription) {
+      updateStatusEnabled();
+      return false;
+    }
     try {
       await addData(
         cardType === "1" ? flagType.redFlags : flagType.whiteFlags,
@@ -46,11 +57,7 @@ export default function Addcard() {
     } catch (error) {
       console.log("error when adding card", error);
     }
-
-    setButtonDisabled(false);
-    setCardType("");
-    setCardDescription("");
-    setCardHint("");
+    updateStatusEnabled();
   }
 
   return (
@@ -68,14 +75,12 @@ export default function Addcard() {
           <option value={0}>White flag</option>
         </Select>
         {!cardType ? (
-          <FormHelperText>
-            Enter the email you'd like to receive the newsletter on.
-          </FormHelperText>
+          <FormHelperText>Enter card type</FormHelperText>
         ) : (
           <FormErrorMessage>Please fill out this field.</FormErrorMessage>
         )}
       </FormControl>
-      <Spacer />
+      <Box h="20px" />
       <FormControl isInvalid={!cardDescription}>
         <FormLabel>Card Description</FormLabel>
         <Input
@@ -86,14 +91,13 @@ export default function Addcard() {
           id="card-description"
         />
         {cardDescription ? (
-          <FormHelperText>
-            Enter the email you'd like to receive the newsletter on.
-          </FormHelperText>
+          <FormHelperText>Enter card description</FormHelperText>
         ) : (
           <FormErrorMessage>Please fill out this field.</FormErrorMessage>
         )}
       </FormControl>
-      <Spacer />
+      <Box h="20px" />
+
       <FormControl>
         <FormLabel> Card hint</FormLabel>
 
@@ -109,7 +113,8 @@ export default function Addcard() {
           guidelines.
         </FormHelperText>
       </FormControl>
-      <Spacer />
+      <Box h="20px" />
+
       <Stack direction="row" spacing={4}>
         <Button
           isLoading={buttonDisabled}
