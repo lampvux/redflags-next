@@ -7,6 +7,7 @@ import {
   browserSessionPersistence,
   User,
   Auth,
+  inMemoryPersistence,
 } from "firebase/auth";
 
 import firebase_app from "./config";
@@ -14,39 +15,21 @@ import firebase_app from "./config";
 const provider = new GoogleAuthProvider();
 provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
 
-export const auth = getAuth(firebase_app);
-setPersistence(auth, browserSessionPersistence)
-  .then(() => {
-    // Existing and future Auth states are now persisted in the current
-    // session only. Closing the window would clear any existing state even
-    // if a user forgets to sign out.
-    // ...
-    // New sign-in will be persisted with session persistence.
-    return;
-  })
-  .catch((error) => {
+export const getCurrentUser = async (): Promise<User | null> => {
+  const auth = getAuth(firebase_app);
+  try {
+    await setPersistence(auth, inMemoryPersistence);
+  } catch (error: any) {
     // Handle Errors here.
     const errorCode = error.code;
     const errorMessage = error.message;
-  });
+  }
 
-export const getCurrentUser = async () => {
-  const promisifiedOnAuthStateChanged = (
-    authData: Auth
-  ): Promise<User | null> => {
-    return new Promise((resolve, reject) => {
-      authData.onAuthStateChanged((user) => {
-        if (user) {
-          resolve(user);
-        } else {
-          resolve(null);
-        }
-      });
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged((user) => {
+      resolve(user);
     });
-  };
-
-  const user = await promisifiedOnAuthStateChanged(auth);
-  return user;
+  });
 };
 
 /**
