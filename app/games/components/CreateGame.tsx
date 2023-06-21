@@ -3,6 +3,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   FormControl,
   FormErrorMessage,
   FormHelperText,
@@ -19,55 +20,89 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
-import { addData } from "../../firebase/firestore";
+import React, { useEffect } from "react";
+import { getCurrentUser } from "../../firebase/auth";
+import { addData, setData } from "../../firebase/firestore";
+import { useRouter } from "next/navigation";
+import uniqid from "uniqid";
 
 export default function CreateGame() {
+  const router = useRouter();
+  const [name, setName] = React.useState<string | null>(null);
+  const [customCards, setCustomCards] = React.useState<boolean>(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [userId, setUserId] = React.useState("");
   const CreateGameOverlay = () => (
     <ModalOverlay
       bg="blackAlpha.300"
       backdropFilter="blur(10px) hue-rotate(90deg)"
     />
   );
-  const [name, setName] = React.useState<string | null>(null);
-  const [password, setPassword] = React.useState<string | null>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = React.useState(<CreateGameOverlay />);
+  const [disabledAdd, setDisabledAdd] = React.useState(false);
 
   function handleOnChangeName(e: React.ChangeEvent<HTMLInputElement>) {
     setName(e.target.value);
   }
-  function handleOnchangePassword(e: React.ChangeEvent<HTMLInputElement>) {
-    setPassword(e.target.value);
+
+  function handleOnChangeCustomCards(e: React.ChangeEvent<HTMLInputElement>) {
+    setCustomCards(e.target.checked);
   }
   function checkValues() {
-    if (!name || !password) {
+    if (!name) {
       return false;
     }
     return true;
   }
   function resetData() {
     setName(null);
-    setPassword(null);
   }
   function showError() {
     setName("");
-    setPassword("");
   }
 
   async function handleAddGame(e: React.MouseEvent) {
     e.preventDefault();
+    setDisabledAdd(true);
     if (checkValues() === false) {
       showError();
       return;
     }
     try {
-      await addData("games", { name, password });
+      const response = await addData("games", {
+        name,
+        lastActive: Date.now(),
+        userId,
+        members: [userId],
+        customCards: customCards,
+      });
+      if (response.id) {
+        try {
+          await setData("games", response.id, {
+            password: uniqid(),
+          });
+          onClose();
+          router.push(`/games/${response.id}`);
+        } catch (error) {
+          console.log("error in set unique data: ", error);
+        }
+      }
     } catch (error) {
       console.log(error);
     }
     resetData();
+    setDisabledAdd(false);
   }
+
+  // get current user id from firebase auth
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      if (!user) {
+        return;
+      }
+      setUserId(user.uid);
+    });
+  }, [userId]);
 
   return (
     <>
@@ -108,28 +143,25 @@ export default function CreateGame() {
               )}
             </FormControl>
             <Box h={4} />
-            <FormControl
-              id="password"
-              isInvalid={!password && password !== null}
-            >
-              <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                value={password === null ? "" : password}
-                onChange={handleOnchangePassword}
-                required
-              />
-              {!password && password !== null ? (
-                <FormHelperText>Enter Game Password</FormHelperText>
-              ) : (
-                <FormErrorMessage>Please fill out this field.</FormErrorMessage>
-              )}
+
+            <FormControl display="flex" alignItems="center" mt={4}>
+              <Checkbox
+                defaultChecked={customCards}
+                onChange={handleOnChangeCustomCards}
+              >
+                Enable Custom Cards
+              </Checkbox>
             </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>Close</Button>
             <Spacer />
-            <Button colorScheme="teal" variant="solid" onClick={handleAddGame}>
+            <Button
+              colorScheme="teal"
+              variant="solid"
+              onClick={handleAddGame}
+              disabled={disabledAdd}
+            >
               Add Game
             </Button>
           </ModalFooter>

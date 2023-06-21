@@ -43,9 +43,10 @@ export async function addData(colllection: string, data: any) {
     result = await addDoc(collection(db, colllection), data);
   } catch (e) {
     error = e;
+    throw new Error(JSON.stringify(e));
   }
 
-  return { result, error };
+  return { id: result.id, result, error };
 }
 
 export async function getDoument(collection: string, id: string) {

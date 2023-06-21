@@ -2,6 +2,8 @@
 
 import {
   Button,
+  FormControl,
+  FormLabel,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -56,7 +58,9 @@ export default function JoinGame() {
           <ModalHeader>Join Existed Game</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>Custom backdrop filters!</Text>
+            <FormControl>
+              <FormLabel>Game Password</FormLabel>
+            </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>Close</Button>

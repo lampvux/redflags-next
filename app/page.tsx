@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 import React from "react";
 import Head from "next/head";
@@ -6,14 +7,12 @@ import {
   Heading,
   Container,
   Text,
-  Button,
   Stack,
-  Icon,
-  useColorModeValue,
   createIcon,
 } from "@chakra-ui/react";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import { Link } from "@chakra-ui/next-js";
 
 export default function Index() {
   return (
@@ -50,7 +49,8 @@ export default function Index() {
             alignSelf={"center"}
             position={"relative"}
           >
-            <Button
+            <Link
+              href="/games"
               border={"1px"}
               colorScheme="teal"
               size="md"
@@ -61,7 +61,7 @@ export default function Index() {
               }}
             >
               Let's go
-            </Button>
+            </Link>
           </Stack>
         </Stack>
       </Container>
