@@ -1,11 +1,23 @@
+/**
+ * This is a dynamic page that will be rendered at /games/[id]
+ * it will be rendered for each game that is created
+ * each game will have a unique id
+ * each game will have a password to join in
+ * each game will have a list of members
+ * each game will have a list of cards
+ * each game will have a list of rounds
+ * any members reach the max score of 3 will be the winner
+ */
 "use client";
 import { Flex } from "@chakra-ui/react";
 import { useParams, useRouter } from "next/navigation";
-import React, { use } from "react";
+import React from "react";
 import { useEffect } from "react";
 import { getCurrentUser } from "../../firebase/auth";
 import { getDoument, watchDocument } from "../../firebase/firestore";
-import PasswordPopup from "../components/PasswordPopup";
+import EnterPasswordPopup from "../components/EnterPasswordPopup";
+import ShowPasswordPopup from "../components/ShowPasswordPopup";
+import PasswordPopup from "../components/ShowPasswordPopup";
 
 export default function Singlegame() {
   const [currentGame, setCurrentGame] = React.useState<any>(null);
@@ -41,12 +53,14 @@ export default function Singlegame() {
 
   return (
     <Flex>
-      {currentGame && currentGame.members.indexOf(userId) !== -1 ? (
-        <Flex>Game</Flex>
+      {currentGame &&
+      currentGame.members.indexOf(userId) !== -1 &&
+      currentGame.members.length > 1 ? (
+        <Flex></Flex>
+      ) : currentGame?.admin === userId ? (
+        <ShowPasswordPopup open={true} password={currentGame.password} />
       ) : (
-        <Flex>
-          <PasswordPopup open={true} />{" "}
-        </Flex>
+        <EnterPasswordPopup open={true} />
       )}
     </Flex>
   );

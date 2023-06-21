@@ -27,7 +27,6 @@ export default function Games() {
         <Avatar
           size={"xl"}
           src={"/img/card-game.png"}
-          alt={"Avatar Alt"}
           mb={4}
           pos={"relative"}
           _after={{

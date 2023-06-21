@@ -15,6 +15,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
+import EnterPasswordPopup from "./EnterPasswordPopup";
 
 export default function JoinGame() {
   const JoinGameOverlay = () => (
@@ -52,21 +53,7 @@ export default function JoinGame() {
         Join Game
       </Button>
 
-      <Modal isCentered isOpen={isOpen} onClose={onClose}>
-        {overlay}
-        <ModalContent>
-          <ModalHeader>Join Existed Game</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Game Password</FormLabel>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose}>Close</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <EnterPasswordPopup open={isOpen} />
     </>
   );
 }

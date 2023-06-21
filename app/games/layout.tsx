@@ -13,7 +13,7 @@ export default function GameLayout({
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (!user) {
-        router.push("/");
+        router.push("/login");
       }
       console.log(user);
     });

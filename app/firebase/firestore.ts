@@ -49,6 +49,22 @@ export async function addData(colllection: string, data: any) {
   return { id: result.id, result, error };
 }
 
+// find document by field value
+export async function findDocument(
+  collectionName: string,
+  field: any,
+  value: any
+) {
+  const querySnapshot = await getDocs(
+    collection(db, collectionName, field, "==", value)
+  );
+  const listDocs: any[] = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    data: doc.data(),
+  }));
+  return listDocs;
+}
+
 export async function getDoument(collection: string, id: string) {
   const docRef = doc(db, collection, id);
 
@@ -64,6 +80,15 @@ export async function getDoument(collection: string, id: string) {
   return { result, error };
 }
 
+/**
+ *
+ *  @param {string} collectionName
+ *  @param {string} id
+ *  @param {(data: any) => void} callback
+ *  @returns {Promise<() => void>}
+ *
+ * */
+
 export async function watchDocument(
   collectionName: string,
   id: string,
@@ -74,6 +99,12 @@ export async function watchDocument(
   });
   return unsub();
 }
+
+/**
+ * @param {string} collectionName
+ *  @returns {Promise<any[]>}
+ * */
+
 export async function getDocuments(collectionName: string): Promise<any[]> {
   try {
     const querySnapshot = await getDocs(collection(db, collectionName));

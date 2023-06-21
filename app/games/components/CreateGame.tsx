@@ -75,6 +75,7 @@ export default function CreateGame() {
         userId,
         members: [userId],
         customCards: customCards,
+        admin: userId,
       });
       if (response.id) {
         try {
