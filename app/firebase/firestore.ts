@@ -9,6 +9,13 @@ import {
   onSnapshot,
   addDoc,
   deleteDoc,
+  DocumentReference,
+  DocumentData,
+  DocumentSnapshot,
+  query,
+  where,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 
 const db = getFirestore(firebase_app);
@@ -35,8 +42,29 @@ export async function setData(colllection: string, id: string, data: any) {
   return { result, error };
 }
 
-export async function addData(colllection: string, data: any) {
+export async function updateDocumentArrayField(
+  collectionName: string,
+  id: string,
+  field: string,
+  data: any
+) {
+  const docRef = doc(db, collectionName, id);
   let result = null;
+  let error = null;
+
+  try {
+    result = await updateDoc(docRef, {
+      [field]: arrayUnion(data),
+    });
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function addData(colllection: string, data: any) {
+  let result: DocumentReference<any> | null = null;
   let error = null;
 
   try {
@@ -55,20 +83,21 @@ export async function findDocument(
   field: any,
   value: any
 ) {
-  const querySnapshot = await getDocs(
-    collection(db, collectionName, field, "==", value)
-  );
+  const q = query(collection(db, collectionName), where(field, "==", value));
+
+  const querySnapshot = await getDocs(q);
+
   const listDocs: any[] = querySnapshot.docs.map((doc) => ({
     id: doc.id,
     data: doc.data(),
   }));
-  return listDocs;
+  return listDocs.pop();
 }
 
 export async function getDoument(collection: string, id: string) {
   const docRef = doc(db, collection, id);
 
-  let result = null;
+  let result: DocumentSnapshot<DocumentData> | null = null;
   let error = null;
 
   try {
@@ -94,7 +123,9 @@ export async function watchDocument(
   id: string,
   callback: (data: any) => void
 ) {
+  //
   const unsub = onSnapshot(doc(db, collectionName, id), (doc) => {
+    console.log("data: ", [doc.id, doc.data()]);
     callback(doc.data());
   });
   return unsub();

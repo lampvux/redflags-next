@@ -12,12 +12,18 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Input,
   useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
-import EnterPasswordPopup from "./EnterPasswordPopup";
+import {
+  findDocument,
+  updateDocumentArrayField,
+} from "../../firebase/firestore";
+import { games } from "../../types";
+import { useRouter } from "next/navigation";
 
-export default function JoinGame() {
+export default function JoinGame({ userId }: { userId: string }) {
   const JoinGameOverlay = () => (
     <ModalOverlay
       bg="blackAlpha.300"
@@ -27,7 +33,29 @@ export default function JoinGame() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = React.useState(<JoinGameOverlay />);
+  const [password, setPassword] = React.useState("");
+  const router = useRouter();
 
+  function passwordChangeHandle(e: React.ChangeEvent<HTMLInputElement>) {
+    setPassword(e.target.value);
+  }
+
+  function enterGameHandle() {
+    try {
+      findDocument(games, "password", password).then(async (doc) => {
+        if (doc) {
+          console.log(doc);
+          await updateDocumentArrayField(games, doc.id, "members", userId);
+          onClose();
+          router.push(`/games/${doc.id}`);
+        } else {
+          console.log("No such document!");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <>
       <Button
@@ -53,7 +81,26 @@ export default function JoinGame() {
         Join Game
       </Button>
 
-      <EnterPasswordPopup open={isOpen} />
+      <Modal isCentered isOpen={isOpen} onClose={onClose}>
+        {overlay}
+        <ModalContent>
+          <ModalHeader>Enter password to join game</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Password</FormLabel>
+              <Input
+                type="password"
+                value={password}
+                onChange={passwordChangeHandle}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={enterGameHandle}>Enter</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

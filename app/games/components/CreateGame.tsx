@@ -17,21 +17,18 @@ import {
   ModalHeader,
   ModalOverlay,
   Spacer,
-  Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
-import { getCurrentUser } from "../../firebase/auth";
+import React from "react";
 import { addData, setData } from "../../firebase/firestore";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
 
-export default function CreateGame() {
+export default function CreateGame({ userId }: { userId: string }) {
   const router = useRouter();
   const [name, setName] = React.useState<string | null>(null);
   const [customCards, setCustomCards] = React.useState<boolean>(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [userId, setUserId] = React.useState("");
   const CreateGameOverlay = () => (
     <ModalOverlay
       bg="blackAlpha.300"
@@ -94,16 +91,6 @@ export default function CreateGame() {
     resetData();
     setDisabledAdd(false);
   }
-
-  // get current user id from firebase auth
-  useEffect(() => {
-    getCurrentUser().then((user) => {
-      if (!user) {
-        return;
-      }
-      setUserId(user.uid);
-    });
-  }, [userId]);
 
   return (
     <>

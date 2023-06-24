@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getCurrentUser, signIn } from "../firebase/auth";
 
 export default function Login() {

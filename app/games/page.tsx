@@ -11,8 +11,21 @@ import {
 } from "@chakra-ui/react";
 import CreateGame from "./components/CreateGame";
 import JoinGame from "./components/JoinGame";
+import React, { useEffect } from "react";
+import { getCurrentUser } from "../firebase/auth";
 
 export default function Games() {
+  // get current user id from firebase auth
+  const [userId, setUserId] = React.useState("");
+
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      if (!user) {
+        return;
+      }
+      setUserId(user.uid);
+    });
+  }, [userId]);
   return (
     <Center py={6}>
       <Box
@@ -56,8 +69,8 @@ export default function Games() {
         </Text>
 
         <Stack mt={8} direction={"row"} spacing={4}>
-          <CreateGame />
-          <JoinGame />
+          <CreateGame userId={userId} />
+          <JoinGame userId={userId} />
         </Stack>
       </Box>
     </Center>

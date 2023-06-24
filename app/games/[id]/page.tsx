@@ -41,9 +41,10 @@ export default function Singlegame() {
     getDoument("games", id as unknown as string).then((res) => {
       console.log("res", res);
       if (!res.error) {
-        watchDocument("games", id as unknown as string, (res) => {
-          console.log("res", res);
-          setCurrentGame(res);
+        // need to check watcher document
+        watchDocument("games", id as unknown as string, (response) => {
+          console.log("response", response);
+          setCurrentGame(response);
         });
       } else {
         router.push("/games");
